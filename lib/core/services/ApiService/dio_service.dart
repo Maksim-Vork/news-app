@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:news/core/exeptions/app_ex%D1%81eptions.dart';
 
 class DioService {
@@ -9,8 +10,8 @@ class DioService {
       BaseOptions(
         baseUrl: 'https://newsapi.org/v2',
         headers: {
-          'X-Api-Key': '2233bb9a8bd84fffb10a693037612c58',
-        }, //переместить и защитить и прописать gitgnore
+          'X-Api-Key': dotenv.env['NEWS_API_KEY'] ?? '',
+        },
       ),
     );
 
@@ -25,14 +26,39 @@ class DioService {
       ),
       InterceptorsWrapper(
         onError: (DioException error, handler) {
-          if (error.type == DioExceptionType.connectionError) {
-            throw AppExceptions(nameError: 'Нет подключения к интернету');
-          }
-          if (error.response?.statusCode == 429) {
-            throw AppExceptions(nameError: 'Достигнут лимит получения данных');
+          AppExceptions appException;
+
+          switch (error.type) {
+            case DioExceptionType.connectionError:
+            case DioExceptionType.unknown:
+              appException =
+                  AppExceptions(nameError: 'Нет подключения к интернету');
+              break;
+            case DioExceptionType.badResponse:
+              if (error.response?.statusCode == 429) {
+                appException = AppExceptions(
+                    nameError: 'Достигнут лимит получения данных');
+              } else {
+                appException = AppExceptions(
+                    nameError: 'Ошибка сервера: ${error.response?.statusCode}');
+              }
+              break;
+            case DioExceptionType.cancel:
+              appException = AppExceptions(nameError: 'Запрос был отменён');
+              break;
+            default:
+              appException =
+                  AppExceptions(nameError: 'Произошла неизвестная ошибка');
           }
 
-          return handler.next(error);
+          return handler.reject(
+            DioException(
+              requestOptions: error.requestOptions,
+              error: appException,
+              response: error.response,
+              type: error.type,
+            ),
+          );
         },
       ),
     ]);
@@ -45,8 +71,13 @@ class DioService {
     try {
       final response = await _dio.get(endpoint, queryParameters: queryParams);
       return response;
-    } on DioException catch (_) {
+    } on DioException catch (e) {
+      if (e.error is AppExceptions) {
+        throw e.error!;
+      }
       rethrow;
+    } catch (e) {
+      throw AppExceptions(nameError: 'Произошла неизвестная ошибка');
     }
   }
 }

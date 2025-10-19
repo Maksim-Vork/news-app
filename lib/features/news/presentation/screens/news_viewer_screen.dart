@@ -155,6 +155,9 @@ class _NewsViewerScreenState extends State<NewsViewerScreen> {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
+                SizedBox(
+                  height: 120,
+                )
               ],
             ),
           ),

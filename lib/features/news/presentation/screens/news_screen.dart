@@ -23,12 +23,13 @@ class NewsScreen extends StatelessWidget {
                 SliverAppBar(
                   backgroundColor: Colors.white,
                   toolbarHeight: 100,
-                  expandedHeight: 140,
+                  expandedHeight: 160,
                   surfaceTintColor: Colors.transparent,
                   pinned: true,
                   floating: false,
                   title: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
                     child: TextField(
                       onSubmitted: (String string) =>
                           BlocProvider.of<NewsBloc>(context).add(
@@ -54,7 +55,7 @@ class NewsScreen extends StatelessWidget {
                     background: Container(
                       color: Colors.white,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 80),
+                        padding: const EdgeInsets.only(top: 120),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           padding: const EdgeInsets.symmetric(

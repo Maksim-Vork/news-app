@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:news/features/news/presentation/screens/favorite_news_screen.dart';
-import 'package:news/features/news/presentation/screens/news_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:news/features/news/presentation/widgets/custom_bottom_nav_bar.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final Widget child;
+  const MainScreen({super.key, required this.child});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -14,14 +14,21 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> screens = [
-    NewsScreen(),
-    FavoriteNewsScreen(),
-  ];
+  void _onTabTapped(int index) {
+    setState(() => _currentIndex = index);
+    switch (index) {
+      case 0:
+        context.go('/news');
+        break;
+      case 1:
+        context.go('/favorites');
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<BottomNavigationBarItem> _navBarItems = [
+    final List<BottomNavigationBarItem> navBarItems = [
       BottomNavigationBarItem(
         icon: Padding(
           padding: const EdgeInsets.only(top: 20.0),
@@ -48,11 +55,11 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       extendBody: true,
-      body: screens[_currentIndex],
+      body: widget.child,
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        items: _navBarItems,
+        onTap: _onTabTapped,
+        items: navBarItems,
       ),
     );
   }

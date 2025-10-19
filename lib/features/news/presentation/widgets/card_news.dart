@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:news/features/news/domain/entitys/news.dart';
 import 'package:news/features/news/presentation/bloc/news_bloc.dart';
 import 'package:news/features/news/presentation/bloc/news_event.dart';
-import 'package:news/features/news/presentation/screens/news_viewer_screen.dart';
 
 class CardNewsWidget extends StatefulWidget {
   final News news;
@@ -30,12 +30,7 @@ class _CardNewsWidgetState extends State<CardNewsWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 19, vertical: 8),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NewsViewerScreen(news: widget.news),
-            ),
-          );
+          context.go('/news/viewer', extra: widget.news);
         },
         child: Container(
           decoration: BoxDecoration(

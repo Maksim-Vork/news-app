@@ -29,7 +29,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
       emit(LoadedNewsState(news: news, favoriteNews: favoriteNews));
     } on AppExceptions catch (e) {
-      emit(ErrorNewsState(error: e.toString()));
+      emit(ErrorNewsState(error: e.nameError));
     } catch (e) {
       debugPrint('Ошибка получения: $e');
       emit(ErrorNewsState(error: 'Произошла ошибка, мы над этим уже работаем'));
